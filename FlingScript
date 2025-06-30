@@ -43,35 +43,7 @@ local Toggle = FlingTab:CreateToggle({
    Name = "Fling",
    CurrentValue = false,
    Flag = "Toggle1",
-Callback = function(Value)
-    local Players = game:GetService("Players")
-    local RunService = game:GetService("RunService")
-
-    local localPlayer = Players.LocalPlayer
-    local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
-    local root = character:WaitForChild("HumanoidRootPart")
-
-    -- Connection handle
-    if Value then
-        -- Spin the HumanoidRootPart directly
-        root.AssemblyAngularVelocity = Vector3.new(0, 999, 0)
-
-        -- Keep applying it every frame
-        _G.FlingLoop = RunService.Stepped:Connect(function()
-            if root and root.Parent then
-                root.AssemblyAngularVelocity = Vector3.new(0, 999, 0)
-            end
-        end)
-    else
-        -- Stop the spin
-        if _G.FlingLoop then
-            _G.FlingLoop:Disconnect()
-            _G.FlingLoop = nil
-        end
-
-        -- Reset angular velocity
-        root.AssemblyAngularVelocity = Vector3.zero
-            end
-        end
+    Callback = function(Value)
+        
     end,
 })
