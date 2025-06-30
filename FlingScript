@@ -51,85 +51,26 @@ Callback = function(Value)
     local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
     local root = character:WaitForChild("HumanoidRootPart")
 
-    local flingConnection
-    local spinPart
-
-    -- Function to find the nearest humanoid
-    local function getClosestTarget()
-        local closest = nil
-        local shortestDist = math.huge
-
-        for _, v in pairs(workspace:GetDescendants()) do
-            if v:IsA("Model") and v ~= character and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
-                if v.Humanoid.Health > 0 then
-                    local dist = (v.HumanoidRootPart.Position - root.Position).Magnitude
-                    if dist < shortestDist then
-                        shortestDist = dist
-                        closest = v.HumanoidRootPart
-                    end
-                end
-            end
-        end
-
-        return closest
-    end
-
+    -- Connection handle
     if Value then
-        -- Make your player non-collidable
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
-        end
+        -- Spin the HumanoidRootPart directly
+        root.AssemblyAngularVelocity = Vector3.new(0, 999, 0)
 
-        -- Teleport to closest target
-        local target = getClosestTarget()
-        if target then
-            root.CFrame = target.CFrame + Vector3.new(0, 5, 0)
-        end
-
-        -- Create spinPart
-        spinPart = Instance.new("Part")
-        spinPart.Name = "FlingPart"
-        spinPart.Size = Vector3.new(15, 1, 15)
-        spinPart.Transparency = 1
-        spinPart.CanCollide = false
-        spinPart.Massless = true
-        spinPart.Anchored = false
-        spinPart.Parent = character
-
-        -- Weld to root
-        local weld = Instance.new("WeldConstraint")
-        weld.Part0 = root
-        weld.Part1 = spinPart
-        weld.Parent = spinPart
-        spinPart.CFrame = root.CFrame
-
-        -- Spin it
-        flingConnection = RunService.Stepped:Connect(function()
-            if spinPart and spinPart.Parent then
-                spinPart.AssemblyAngularVelocity = Vector3.new(0, 999, 0)
+        -- Keep applying it every frame
+        _G.FlingLoop = RunService.Stepped:Connect(function()
+            if root and root.Parent then
+                root.AssemblyAngularVelocity = Vector3.new(0, 999, 0)
             end
         end)
-
     else
-        -- Re-enable collisions
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
+        -- Stop the spin
+        if _G.FlingLoop then
+            _G.FlingLoop:Disconnect()
+            _G.FlingLoop = nil
         end
 
-        -- Clean up
-        if flingConnection then
-            flingConnection:Disconnect()
-            flingConnection = nil
-        end
-
-        if spinPart and spinPart.Parent then
-            spinPart:Destroy()
-            spinPart = nil
-                end
+        -- Reset angular velocity
+        root.AssemblyAngularVelocity = Vector3.zero
             end
         end
     end,
