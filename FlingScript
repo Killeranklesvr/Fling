@@ -1,0 +1,95 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Killer Hub | Flinger",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "Killer Hub",
+   LoadingSubtitle = "by gou9907 on discord",
+   ShowText = "Killer Hub", -- for mobile users to unhide rayfield, change if you'd like
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   ToggleUIKeybind = "K", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Hub"
+   },
+
+   Discord = {
+      Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "TxvFuct5F2", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = true, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Killer Hub Key System",
+      Subtitle = "Key System Get The Key From The Discord",
+      Note = "Join our discord for the key. https://discord.gg/TxvFuct5F2", -- Use this to tell the user how to get a key
+      FileName = "KeyThatIsSigmaTbh", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"erytiubnfdssdfrl"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local FlingTab = Window:CreateTab("Fling", 4483362458) -- Title, Image
+
+local Toggle = FlingTab:CreateToggle({
+   Name = "Fling",
+   CurrentValue = false,
+   Flag = "Toggle1",
+   Callback = function(Value)
+    local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local localPlayer = Players.LocalPlayer
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+
+local flingConnection
+local spinPart
+
+if Value then
+    -- Create spinPart if not already created
+    spinPart = Instance.new("Part")
+    spinPart.Name = "FlingPart"
+    spinPart.Size = Vector3.new(15, 1, 15)
+    spinPart.Transparency = 1
+    spinPart.CanCollide = false
+    spinPart.Massless = true
+    spinPart.Anchored = false
+    spinPart.Parent = character
+
+    -- Weld it to your HumanoidRootPart
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = root
+    weld.Part1 = spinPart
+    weld.Parent = spinPart
+    spinPart.CFrame = root.CFrame
+
+    -- Begin spinning
+    flingConnection = RunService.Stepped:Connect(function()
+        if spinPart and spinPart.Parent then
+            spinPart.AssemblyAngularVelocity = Vector3.new(0, 999, 0)
+        end
+    end)
+
+else
+    -- Turn off fling
+    if flingConnection then
+        flingConnection:Disconnect()
+        flingConnection = nil
+    end
+
+    if spinPart and spinPart.Parent then
+        spinPart:Destroy()
+        spinPart = nil
+            end
+        end
+    end,
+})
